@@ -17,17 +17,25 @@ from PIL import Image
 from hy3dgen.rembg import BackgroundRemover
 from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline
 from hy3dgen.texgen import Hunyuan3DPaintPipeline
+from hy3dgen.shapegen import FaceReducer, FloaterRemover, DegenerateFaceRemover
+import trimesh
 
 model_path = 'tencent/Hunyuan3D-2'
 pipeline_shapegen = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(model_path)
 pipeline_texgen = Hunyuan3DPaintPipeline.from_pretrained(model_path)
 
-image_path = 'assets/demo.png'
+image_path = '/data/ziqi/data/real_imgs/preprocessed/cat1.png'
 image = Image.open(image_path).convert("RGBA")
 if image.mode == 'RGB':
     rembg = BackgroundRemover()
     image = rembg(image)
 
-mesh = pipeline_shapegen(image=image)[0]
+#mesh = pipeline_shapegen(image=image)[0]
+#for cleaner in [FloaterRemover(), DegenerateFaceRemover(), FaceReducer()]:
+    #mesh = cleaner(mesh)
+
+#mesh.export('/data/ziqi/data/hyout/cat1geo.glb')
+mesh = trimesh.load('/data/ziqi/data/hyout/cat1geo.glb')
+print(pipeline_texgen.render.filter_mode)
 mesh = pipeline_texgen(mesh, image=image)
 mesh.export('demo.glb')

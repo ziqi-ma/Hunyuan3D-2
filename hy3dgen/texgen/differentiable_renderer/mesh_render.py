@@ -271,6 +271,7 @@ class MeshRender():
         tex = np.array(tex) / 255.0
         self.tex = torch.from_numpy(tex).to(self.device)
         self.tex = self.tex.float()
+        torch.save(self.tex, "texture_ini.pt")
 
     def set_default_render_resolution(self, default_resolution):
         if isinstance(default_resolution, int):

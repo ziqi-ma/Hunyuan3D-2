@@ -12,7 +12,7 @@
 # fine-tuning enabling code and other elements of the foregoing made publicly available
 # by Tencent in accordance with TENCENT HUNYUAN COMMUNITY LICENSE AGREEMENT.
 
-
+from torchvision.utils import save_image
 import logging
 import numpy as np
 import os
@@ -224,14 +224,20 @@ class Hunyuan3DPaintPipeline:
             # multiviews[i] = self.models['super_model'](multiviews[i])
             multiviews[i] = multiviews[i].resize(
                 (self.config.render_size, self.config.render_size))
+            #multiviews[i].save(f'{i}.png', format="PNG")
+            
 
         texture, mask = self.bake_from_multiview(multiviews,
                                                  selected_camera_elevs, selected_camera_azims, selected_view_weights,
                                                  method=self.config.merge_method)
+        
+
+        #save_image(texture.permute(2, 0, 1).unsqueeze(0), "texture.png")
 
         mask_np = (mask.squeeze(-1).cpu().numpy() * 255).astype(np.uint8)
 
         texture = self.texture_inpaint(texture, mask_np)
+        #save_image(texture.permute(2, 0, 1).unsqueeze(0), "texture_inpainted.png")
 
         self.render.set_texture(texture)
         textured_mesh = self.render.save_mesh()
