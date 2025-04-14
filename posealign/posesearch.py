@@ -22,13 +22,14 @@ def search_pose(mesh, cameras, target_img, dists_repeat, elevs_repeat, azims_rep
 
 
 if __name__ == "__main__":
-    mesh = glb_to_py3d("../demo.glb").cuda()
+    name = "dog2"
+    mesh = glb_to_py3d(f"/data/ziqi/data/hyout/{name}/out_ini.glb").cuda()
 
-    input_img_path = f"/data/ziqi/data/real_imgs/preprocessed/cat1.png"
+    input_img_path = f"/data/ziqi/data/real_imgs/preprocessed/{name}.png"
     input_img = torch.tensor(np.array(Image.open(input_img_path).convert("RGB"))).float()
-    dists = torch.linspace(2.5,2.6,20)
-    elevs = torch.linspace(1,3,20)
-    azims = torch.linspace(-9,-3,20)
+    dists = torch.linspace(2.5,3.2,10)
+    elevs = torch.linspace(-2,2,10)
+    azims = torch.linspace(0,10,10)
     cameras, dists_repeat, elevs_repeat, azims_repeat = get_cameras_combinatoric(dists, elevs, azims, device = "cuda")
 
     dist, elev, azim = search_pose(mesh, cameras, input_img, dists_repeat, elevs_repeat, azims_repeat)

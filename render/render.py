@@ -164,7 +164,7 @@ def render_views(mesh, cameras, out_dir, save=True):
     return torch.cat(images_all, dim=0)
 
 
-def render_views_soft(mesh, cameras, out_dir, save=True):
+def render_views_soft(mesh, cameras, out_dir, blur_radius, save=True):
     num_views = len(cameras)
     # Create a bright white point light
     lights = PointLights(
@@ -176,7 +176,7 @@ def render_views_soft(mesh, cameras, out_dir, save=True):
         device='cuda',
         location=[[0,0,10]],
     )
-    rasterizer = get_rasterizer(512, 0.001, 10, cameras, device='cuda')
+    rasterizer = get_rasterizer(512, blur_radius, 5, cameras, device='cuda')
     shader = get_phong_shader(cameras, lights, device="cuda")
 
     # do in chunk to avoid OOM
